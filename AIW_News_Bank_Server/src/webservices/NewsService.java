@@ -45,7 +45,7 @@ public class NewsService {
 	
 	/**
 	 * 
-	 * @return
+	 * @return xml response of all news
 	 */
 	@GET
 	@Path("findAll")
