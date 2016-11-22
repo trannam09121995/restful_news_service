@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:pl="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<ui:composition
+	template="/resources/template/profile_template.xhtml">
+	<ui:define name="title">
+		TALET NEWS
+	</ui:define>
+	<ui:define name="content">
+		<div class="col-md-8 left-cont content">
+			<div class="widget-cmn area-cmn cerft">
+				<h1><strong>LATEST NEWS</strong></h1>
+				<hr></hr>
+				<div class="news">
+					<c:forEach var='current_new' items="#{newsController.list_news}">
+						<div class="current_new">
+							<table>
+								<tr>
+									<td>#{current_new.title}</td>
+								</tr>
+							</table>
+						</div>
+					</c:forEach>
+				</div>
+			</div>
+			<div class="widget-cmn area-cmn cerft">
+				<h1><strong>RELATED NEWS</strong></h1>
+				<hr></hr>
+			</div>
+			<div class="widget-cmn area-cmn cerft">
+				<h1><strong>TAGS</strong></h1>
+				<hr></hr>
+			</div>
+		</div>
+		
+	</ui:define>
+	<!-- 	<ui:define name="preview"></ui:define> -->
+</ui:composition>
+</html>

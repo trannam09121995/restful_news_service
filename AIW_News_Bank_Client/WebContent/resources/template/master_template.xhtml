@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:jsf="http://xmlns.jcp.org/jsf"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<h:head>
+	<title><ui:insert name="title"></ui:insert></title>
+	<ui:insert name="seo"></ui:insert>
+
+	<link href="#{request.contextPath}/resources/user/css/my_css.css"
+		rel="stylesheet" type="text/css" />
+	<link href="#{request.contextPath}/resources/user/css/bootstrap.css"
+		rel="stylesheet" type="text/css" />
+	<link href="#{request.contextPath}/resources/user/css/theme.css"
+		rel="stylesheet" type="text/css" />
+	<link
+		href="#{request.contextPath}/resources/user/css/jquery-ui/jquery-ui.css"
+		rel="stylesheet" type="text/css" />
+
+	<link rel="stylesheet"
+		href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" />
+
+	<h:outputScript library="javax.faces" name="jsf.js" />
+	<script
+		src="#{request.contextPath}/resources/user/js/jquery-1.12.1.min.js"></script>
+	<script src="#{request.contextPath}/resources/user/js/jquery-ui.js"></script>
+	<!-- Bootstrap Core Js -->
+	<script type="text/javascript"
+		src="#{request.contextPath}/resources/admin/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+		jsf.ajax.addOnEvent(function(data) {
+			var ajaxstatus = data.status; // Can be "begin	", "complete" and "success"
+			var ajaxloader = document.getElementById("ajaxloader");
+
+			switch (ajaxstatus) {
+			case "begin": // This is called right before ajax request is been sent.
+				ajaxloader.style.display = 'block';
+				break;
+
+			case "complete": // This is called right after ajax response is received.
+				ajaxloader.style.display = 'none';
+				break;
+
+			case "success": // This is called when ajax response is successfully processed.
+				// NOOP.
+				break;
+			}
+		});
+	</script>
+</h:head>
+<h:body>
+	<f:view locale="#{localeController.localeCode}" />
+	<ui:insert name="header">
+		<div id="header" class="header navbar navbar-default">
+			<ui:include src="header.xhtml"></ui:include>
+		</div>
+	</ui:insert>
+	<div id="content" class="content">
+		<ui:insert name="content">
+		</ui:insert>
+	</div>
+	<div class="clearLeft">
+		<span></span>
+	</div>
+	<ui:insert name="footer">
+		<div id="footer" class="footer">
+			<ui:include src="footer.xhtml"></ui:include>
+		</div>
+	</ui:insert>
+
+	<img src="#{request.contextPath}/resources/user/img/ajax-loader.gif"
+		id="ajaxloader"
+		style="position: absolute; margin: auto; left: 0; right: 0; top: 0; bottom: 0; display: none;" />
+</h:body>
+</html>

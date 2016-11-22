@@ -1,0 +1,107 @@
+@charset "UTF-8";
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, dialog, figure, footer, header,
+hgroup, menu, nav, section,
+time, mark, audio, video, button {
+	margin:0;
+	padding:0;
+	border:0;
+	outline:0;
+	font-size:100%;
+	vertical-align:baseline;
+	background:transparent;
+}
+* {margin:0;padding:0}
+body {
+	line-height:1;
+}
+
+th,td {
+	font-weight: normal;
+	padding: 0.5em;
+	vertical-align: top;
+}
+
+article, aside, dialog, figure, footer, header,
+hgroup, nav, section {
+	display:block;
+}
+
+nav ul {
+	list-style:none;
+}
+
+blockquote, q {
+	quotes:none;
+}
+
+blockquote:before, blockquote:after, button:before, button:after,
+q:before, q:after {
+	content:'';
+	content:none;
+}
+
+a {
+	margin:0;
+	padding:0;
+	border:0;
+	font-size:100%;
+	vertical-align:baseline;
+	background:transparent;
+}
+p {line-height:22px}
+ins {
+	background-color:#db630d;
+	color:#000;
+	text-decoration:none;
+}
+
+mark {
+	background-color:#db630d;
+	color:#000;
+	font-style:italic;
+	font-weight:bold;
+}
+
+del {
+	text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+	border-bottom:1px dotted #db630d;
+	cursor:help;
+}
+
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+	width:100%;
+}
+
+hr {
+	visibility: hidden;
+    height:1px;
+    border:0;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+	vertical-align:middle;
+}
+
+.clearfix:after{height:0; content:"."; display:block; clear:both; visibility:hidden; line-height:0}
+html[xmlns] .clearfix{display:block}
+* html .clearfix{height:1%}
+.clear{clear:both}
+a {text-decoration:none;outline:none;transition:all ease 0.2s;}
+a:focus, button:focus {outline:none !important;}
+ul, li {list-style:none}

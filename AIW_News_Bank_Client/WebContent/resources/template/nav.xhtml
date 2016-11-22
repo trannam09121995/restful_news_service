@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<ui:composition>
+	<div id="gNavi">
+		<div class="wrap clearfix">
+			<div class="btn-gnavi">
+				<span></span><span></span><span></span>
+			</div>
+			<ul class="lst-menu">
+				<li><h:outputLink
+						value="#{request.contextPath}/user/editother">Tất cả
+						#{sessionScope.mapLabel['user.nav.others']}<span class="line">
+						</span>
+					</h:outputLink></li>
+				<li><h:outputLink id="navProfile"
+						value="#{request.contextPath}/user/editprofile">Thể thao
+						#{sessionScope.mapLabel['user.nav.profile']}<span class="line"></span>
+					</h:outputLink></li>
+				<li><h:outputLink id="navEducation"
+						value="#{request.contextPath}/user/editeducation">Kinh tế
+						#{sessionScope.mapLabel['user.nav.education']}<span class="line"></span>
+					</h:outputLink></li>
+				<li><h:outputLink id="navSkills" 
+						value="#{request.contextPath}/user/editskill">Chính trị
+						#{sessionScope.mapLabel['user.nav.skills']}<span class="line" ></span>
+					</h:outputLink></li>
+				<li><h:outputLink id="navWorkHistory"
+						value="#{request.contextPath}/user/editworkhistory">Văn Hóa
+						#{sessionScope.mapLabel['user.nav.work_history']}<span class="line"></span>
+					</h:outputLink></li>
+				<li><h:outputLink id="navOthers" 
+						value="#{request.contextPath}/user/editother">Công nghệ
+						#{sessionScope.mapLabel['user.nav.others']}<span class="line">
+						</span>
+					</h:outputLink></li>
+				<li><h:outputLink 
+						value="#{request.contextPath}/user/editother">Thế giới
+						#{sessionScope.mapLabel['user.nav.others']}<span class="line">
+						</span>
+					</h:outputLink></li>
+				<li><h:outputLink
+						value="#{request.contextPath}/user/editother">Quân sự
+						#{sessionScope.mapLabel['user.nav.others']}<span class="line">
+						</span>
+					</h:outputLink></li>
+			</ul>
+			
+		</div>
+	</div>
+</ui:composition>
+</html>

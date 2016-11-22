@@ -1,0 +1,515 @@
+package controller;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.view.facelets.Tag;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import entity.Comment;
+import entity.News;
+
+@ManagedBean
+@SessionScoped
+public class NewsController {
+
+	// client vars
+	public Client client;
+	public static final String BASE_URI = "http://localhost:8081/AIW_News_Bank_Server/services/news/";
+
+	// display vars
+	public List<News> list_news = new ArrayList<News>();
+	public List<News> list_related_news = new ArrayList<News>();
+	public News current_new = new News();
+	public List<Comment> list_comments = new ArrayList<Comment>();
+
+	// add comment vars
+	public int comment_id;
+	public int current_new_id;
+	public String user_name;
+	public String comments;
+	public String time_comment;
+
+	public NewsController() {
+		client = ClientBuilder.newClient();
+		findAll();
+	}
+
+	public List<News> findAll() {
+
+		// get data from webservice
+		String list_news_xml = client.target(BASE_URI + "findAll").request().get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_news_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("news");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Element element = (Element) nl.item(i);
+			News n = new News();
+
+			// id
+			NodeList id = element.getElementsByTagName("id");
+			Element line = (Element) id.item(0);
+			n.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// title
+			NodeList title = element.getElementsByTagName("title");
+			line = (Element) title.item(0);
+			n.setTitle(getCharacterDataFromElement(line));
+
+			// intro
+			NodeList intro = element.getElementsByTagName("intro");
+			line = (Element) intro.item(0);
+			n.setIntro(getCharacterDataFromElement(line));
+
+			// content
+			NodeList content = element.getElementsByTagName("content");
+			line = (Element) content.item(0);
+			n.setContent(getCharacterDataFromElement(line));
+
+			// date-created
+			NodeList date_created = element.getElementsByTagName("date-created");
+			line = (Element) date_created.item(0);
+			n.setDate_created(Timestamp.valueOf(getCharacterDataFromElement(line)));
+
+			// author
+			NodeList author = element.getElementsByTagName("author");
+			line = (Element) author.item(0);
+			n.setAuthor(getCharacterDataFromElement(line));
+
+			// catid-id
+			NodeList catid_id = element.getElementsByTagName("category-id");
+			line = (Element) catid_id.item(0);
+			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			list_news.add(n);
+
+		}
+		return list_news;
+
+	}
+
+	public News findNewById(String new_id) {
+		// get data from webservice
+		String list_news_xml = client.target(BASE_URI + "findNewById=" + new_id).request().get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_news_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("news");
+
+		Element element = (Element) nl.item(0);
+		// News n = new News();
+
+		// id
+		NodeList id = element.getElementsByTagName("id");
+		Element line = (Element) id.item(0);
+		current_new.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+		// title
+		NodeList title = element.getElementsByTagName("title");
+		line = (Element) title.item(0);
+		current_new.setTitle(getCharacterDataFromElement(line));
+
+		// intro
+		NodeList intro = element.getElementsByTagName("intro");
+		line = (Element) intro.item(0);
+		current_new.setIntro(getCharacterDataFromElement(line));
+
+		// content
+		NodeList content = element.getElementsByTagName("content");
+		line = (Element) content.item(0);
+		current_new.setContent(getCharacterDataFromElement(line));
+
+		// date-created
+		NodeList date_created = element.getElementsByTagName("date-created");
+		line = (Element) date_created.item(0);
+		current_new.setDate_created(Timestamp.valueOf(getCharacterDataFromElement(line)));
+
+		// author
+		NodeList author = element.getElementsByTagName("author");
+		line = (Element) author.item(0);
+		current_new.setAuthor(getCharacterDataFromElement(line));
+
+		// catid-id
+		NodeList catid_id = element.getElementsByTagName("category-id");
+		line = (Element) catid_id.item(0);
+		current_new.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+		// tags
+		NodeList tags = element.getElementsByTagName("tags");
+		line = (Element) tags.item(0);
+		current_new.setTags(getCharacterDataFromElement(line));
+
+		return current_new;
+	}
+
+	public List<News> findNewByCatid(String catid_name) {
+		// get data from webservice
+		String list_news_xml = client.target(BASE_URI + "findNewByCatid=" + catid_name).request().get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_news_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("news");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Element element = (Element) nl.item(i);
+			News n = new News();
+
+			// id
+			NodeList id = element.getElementsByTagName("id");
+			Element line = (Element) id.item(0);
+			n.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// title
+			NodeList title = element.getElementsByTagName("title");
+			line = (Element) title.item(0);
+			n.setTitle(getCharacterDataFromElement(line));
+
+			// intro
+			NodeList intro = element.getElementsByTagName("intro");
+			line = (Element) intro.item(0);
+			n.setIntro(getCharacterDataFromElement(line));
+
+			// content
+			NodeList content = element.getElementsByTagName("content");
+			line = (Element) content.item(0);
+			n.setContent(getCharacterDataFromElement(line));
+
+			// date-created
+			NodeList date_created = element.getElementsByTagName("date-created");
+			line = (Element) date_created.item(0);
+			n.setDate_created(Timestamp.valueOf(getCharacterDataFromElement(line)));
+
+			// author
+			NodeList author = element.getElementsByTagName("author");
+			line = (Element) author.item(0);
+			n.setAuthor(getCharacterDataFromElement(line));
+
+			// catid-id
+			NodeList catid_id = element.getElementsByTagName("category-id");
+			line = (Element) catid_id.item(0);
+			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			list_news.add(n);
+
+		}
+		return list_news;
+	}
+
+	public List<News> findNewByTag(String tag_name) {
+		// get data from webservice
+		String list_news_xml = client.target(BASE_URI + "findNewByTag=" + tag_name).request().get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_news_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("news");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Element element = (Element) nl.item(i);
+			News n = new News();
+
+			// id
+			NodeList id = element.getElementsByTagName("id");
+			Element line = (Element) id.item(0);
+			n.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// title
+			NodeList title = element.getElementsByTagName("title");
+			line = (Element) title.item(0);
+			n.setTitle(getCharacterDataFromElement(line));
+
+			// intro
+			NodeList intro = element.getElementsByTagName("intro");
+			line = (Element) intro.item(0);
+			n.setIntro(getCharacterDataFromElement(line));
+
+			// content
+			NodeList content = element.getElementsByTagName("content");
+			line = (Element) content.item(0);
+			n.setContent(getCharacterDataFromElement(line));
+
+			// date-created
+			NodeList date_created = element.getElementsByTagName("date-created");
+			line = (Element) date_created.item(0);
+			n.setDate_created(Timestamp.valueOf(getCharacterDataFromElement(line)));
+
+			// author
+			NodeList author = element.getElementsByTagName("author");
+			line = (Element) author.item(0);
+			n.setAuthor(getCharacterDataFromElement(line));
+
+			// catid-id
+			NodeList catid_id = element.getElementsByTagName("category-id");
+			line = (Element) catid_id.item(0);
+			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			list_news.add(n);
+		}
+		return list_news;
+	}
+
+	/*
+	 * public List<Tag> getTagByNewId(String new_id) { String list_tags_xml =
+	 * client.target(BASE_URI + "getTagByNewId=" +
+	 * new_id).request().get(String.class);
+	 * 
+	 * // read xml string response Document document =
+	 * parseXMLFromString(list_tags_xml); Element root =
+	 * document.getDocumentElement(); NodeList nl =
+	 * root.getElementsByTagName("tag");
+	 * 
+	 * for (int i = 0; i < nl.getLength(); i++) { Element element = (Element)
+	 * nl.item(i); Tag t = new Tag();
+	 * 
+	 * if (element.getTagName().equals("id")) {
+	 * t.setId(Integer.parseInt(element.getTextContent())); } else if
+	 * (element.getTagName().equals("new-id")) {
+	 * t.setNew_id(Integer.parseInt(element.getTextContent())); } else if
+	 * (element.getTagName().equals("tag-name")) {
+	 * t.setTag_name(element.getTextContent()); } else if
+	 * (element.getTagName().equals("search-tag-name")) {
+	 * t.setSearch_tag_name(element.getTextContent()); }
+	 * 
+	 * list_tags.add(t); }
+	 * 
+	 * return list_tags; }
+	 */
+
+	public List<News> getRelatedNewsByCurrentNewId(String new_id) {
+		// get data from webservice
+		String list_news_xml = client.target(BASE_URI + "getRelatedNewsByCurrentNewId=" + new_id).request()
+				.get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_news_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("news");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Element element = (Element) nl.item(i);
+			News n = new News();
+
+			// id
+			NodeList id = element.getElementsByTagName("id");
+			Element line = (Element) id.item(0);
+			n.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// title
+			NodeList title = element.getElementsByTagName("title");
+			line = (Element) title.item(0);
+			n.setTitle(getCharacterDataFromElement(line));
+
+			// intro
+			NodeList intro = element.getElementsByTagName("intro");
+			line = (Element) intro.item(0);
+			n.setIntro(getCharacterDataFromElement(line));
+
+			// content
+			NodeList content = element.getElementsByTagName("content");
+			line = (Element) content.item(0);
+			n.setContent(getCharacterDataFromElement(line));
+
+			// date-created
+			NodeList date_created = element.getElementsByTagName("date-created");
+			line = (Element) date_created.item(0);
+			n.setDate_created(Timestamp.valueOf(getCharacterDataFromElement(line)));
+
+			// author
+			NodeList author = element.getElementsByTagName("author");
+			line = (Element) author.item(0);
+			n.setAuthor(getCharacterDataFromElement(line));
+
+			// catid-id
+			NodeList catid_id = element.getElementsByTagName("category-id");
+			line = (Element) catid_id.item(0);
+			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			list_related_news.add(n);
+
+		}
+		return list_related_news;
+	}
+
+	public List<Comment> getCommentByNewId(String new_id) {
+
+		String list_comments_xml = client.target(BASE_URI + "getCommentByNewId=" + new_id).request().get(String.class);
+
+		// read xml string response
+		Document document = parseXMLFromString(list_comments_xml);
+		Element root = document.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("comment");
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Element element = (Element) nl.item(i);
+			Comment c = new Comment();
+
+			if (element.getTagName().equals("id")) {
+				c.setId(Integer.parseInt(element.getTextContent()));
+			} else if (element.getTagName().equals("new-id")) {
+				c.setNew_id(Integer.parseInt(element.getTextContent()));
+			} else if (element.getTagName().equals("user-name")) {
+				c.setUser_name(element.getTextContent());
+			} else if (element.getTagName().equals("comments")) {
+				c.setComment(element.getTextContent());
+			} else if (element.getTagName().equals("time-comment")) {
+				c.setTime_comment(Timestamp.valueOf(element.getTextContent()));
+			}
+
+			list_comments.add(c);
+
+		}
+		return list_comments;
+	}
+
+	public void addComment() {
+
+	}
+
+	/**
+	 * convert reponse xml string into readable xml document
+	 * 
+	 * @param xml
+	 * @return xml document
+	 */
+	public static Document parseXMLFromString(String xml) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+		Document doc = null;
+		try {
+			builder = factory.newDocumentBuilder();
+			InputSource is = new InputSource(new StringReader(xml));
+			doc = builder.parse(is);
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return doc;
+	}
+
+	/**
+	 * 
+	 * @param e
+	 * @return value of input element (tag name)
+	 */
+	public static String getCharacterDataFromElement(Element e) {
+		Node child = e.getFirstChild();
+		if (child instanceof CharacterData) {
+			CharacterData cd = (CharacterData) child;
+			return cd.getData();
+		}
+		return "";
+	}
+
+	public List<News> getList_news() {
+		return list_news;
+	}
+
+	public void setList_news(List<News> list_news) {
+		this.list_news = list_news;
+	}
+
+	public List<News> getList_related_news() {
+		return list_related_news;
+	}
+
+	public void setList_related_news(List<News> list_related_news) {
+		this.list_related_news = list_related_news;
+	}
+
+	public News getCurrent_new() {
+		return current_new;
+	}
+
+	public void setCurrent_new(News current_new) {
+		this.current_new = current_new;
+	}
+
+	public List<Comment> getList_comments() {
+		return list_comments;
+	}
+
+	public void setList_comments(List<Comment> list_comments) {
+		this.list_comments = list_comments;
+	}
+
+	public int getComment_id() {
+		return comment_id;
+	}
+
+	public void setComment_id(int comment_id) {
+		this.comment_id = comment_id;
+	}
+
+	public int getCurrent_new_id() {
+		return current_new_id;
+	}
+
+	public void setCurrent_new_id(int current_new_id) {
+		this.current_new_id = current_new_id;
+	}
+
+	public String getUser_name() {
+		return user_name;
+	}
+
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	public String getTime_comment() {
+		return time_comment;
+	}
+
+	public void setTime_comment(String time_comment) {
+		this.time_comment = time_comment;
+	}
+
+	public static void main(String[] args) {
+		NewsController nc = new NewsController();
+		List<String> list_tags_separated = new ArrayList<String>();
+		News n = nc.findNewById("1");
+		System.out.println(n.getTags());
+		String[] arr_tags = n.getTags().split(",");
+		for (int i = 0; i < arr_tags.length; i++) {
+			System.out.println(arr_tags[i]);
+		}
+
+	}
+}

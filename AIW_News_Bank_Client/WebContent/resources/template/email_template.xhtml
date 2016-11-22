@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+    <title><ui:insert name="title">#{sessionScope.mapLabel['common.page_title']}</ui:insert></title>
+    <!-- Css -->
+    <ui:include src="/resources/user/template/css.xhtml" />
+    
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/resources/user/img/LOGO-nhotalet-32.png"/>
+    
+    <!-- Java Script -->
+    <ui:include src="/resources/user/template/js.xhtml" />
+</h:head>
+<h:body>
+<!--     <f:view locale="#{localeController.localeCode}" /> -->
+    <div id="wrapper">
+        <ui:insert name="header">
+            <ui:include src="header.xhtml"></ui:include>
+        </ui:insert>
+<!--         <ui:insert name="nav"> -->
+<!--             <ui:include src="nav.xhtml"></ui:include> -->
+<!--         </ui:insert> -->
+        <div id="contents" class="profile-page clearfix">
+            <div class="wrap">
+                <ui:insert name="content"></ui:insert>
+<!--                 <ui:insert name="preview"> -->
+<!--                     <ui:include src="preview.xhtml"></ui:include> -->
+<!--                 </ui:insert> -->
+            </div>
+        </div>
+        <ui:insert name="footer">
+            <ui:include src="footer.xhtml"></ui:include>
+        </ui:insert>
+    </div>
+    <img src="#{request.contextPath}/resources/user/img/ajax-loader.gif"
+        id="ajaxloader"
+        style="position: fixed; margin: auto; left: 0; right: 0; top: 0; bottom: 0; display: none;" />
+
+</h:body>
+</html>
