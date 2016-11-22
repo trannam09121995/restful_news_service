@@ -106,18 +106,6 @@ public class NewsService {
 		};
 	}
 	
-	/*@GET
-	@Path("getTagByNewId={new_id}")
-	@Produces("application/xml")
-	public StreamingOutput getTagsByNew(@PathParam("new_id") String new_id) {
-		list_tags = tagDAO.findTagsByNew(new_id);
-		return new StreamingOutput() {
-			public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-				outputTagsList(outputStream, list_tags);
-			}
-		};
-	}*/
-	
 	/**
 	 * 
 	 * @param new_id
@@ -207,28 +195,7 @@ public class NewsService {
 		writer.println("</list-news>");
 	}
 	
-	/**
-	 * 
-	 * @param os
-	 * @param list_tags
-	 * @throws IOException
-	 */
-	/*protected void outputTagsList(OutputStream os, List<Tag> list_tags) throws IOException {
-		PrintStream writer = new PrintStream(os);
 
-		writer.println("<list-tags>");
-		for (Tag t : list_tags) {
-			writer.println("<tag>");
-			writer.println("<id>" + t.getId() + "</id>");
-			writer.println(" <new-id>" + t.getNew_id() + "</new-id>");
-			writer.println(" <tag-name>" + t.getTag_name() + "</tag-name>");
-			writer.println(" <search-tag-name>" + t.getSearch_tag_name() + "</search-tag-name>");
-			writer.println("</tag>");
-
-		}
-		writer.println("</list-tags>");
-	}*/
-	
 	/**
 	 * 
 	 * @param os
