@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -11,6 +12,8 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.view.facelets.Tag;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -100,6 +103,11 @@ public class NewsController {
 			NodeList catid_id = element.getElementsByTagName("category-id");
 			line = (Element) catid_id.item(0);
 			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// tags
+			NodeList tags = element.getElementsByTagName("tags");
+			line = (Element) tags.item(0);
+			n.setTags(getCharacterDataFromElement(line));
 
 			list_news.add(n);
 
@@ -211,6 +219,11 @@ public class NewsController {
 			line = (Element) catid_id.item(0);
 			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
 
+			// tags
+			NodeList tags = element.getElementsByTagName("tags");
+			line = (Element) tags.item(0);
+			n.setTags(getCharacterDataFromElement(line));
+
 			list_news.add(n);
 
 		}
@@ -265,37 +278,15 @@ public class NewsController {
 			line = (Element) catid_id.item(0);
 			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
 
+			// tags
+			NodeList tags = element.getElementsByTagName("tags");
+			line = (Element) tags.item(0);
+			n.setTags(getCharacterDataFromElement(line));
+
 			list_news.add(n);
 		}
 		return list_news;
 	}
-
-	/*
-	 * public List<Tag> getTagByNewId(String new_id) { String list_tags_xml =
-	 * client.target(BASE_URI + "getTagByNewId=" +
-	 * new_id).request().get(String.class);
-	 * 
-	 * // read xml string response Document document =
-	 * parseXMLFromString(list_tags_xml); Element root =
-	 * document.getDocumentElement(); NodeList nl =
-	 * root.getElementsByTagName("tag");
-	 * 
-	 * for (int i = 0; i < nl.getLength(); i++) { Element element = (Element)
-	 * nl.item(i); Tag t = new Tag();
-	 * 
-	 * if (element.getTagName().equals("id")) {
-	 * t.setId(Integer.parseInt(element.getTextContent())); } else if
-	 * (element.getTagName().equals("new-id")) {
-	 * t.setNew_id(Integer.parseInt(element.getTextContent())); } else if
-	 * (element.getTagName().equals("tag-name")) {
-	 * t.setTag_name(element.getTextContent()); } else if
-	 * (element.getTagName().equals("search-tag-name")) {
-	 * t.setSearch_tag_name(element.getTextContent()); }
-	 * 
-	 * list_tags.add(t); }
-	 * 
-	 * return list_tags; }
-	 */
 
 	public List<News> getRelatedNewsByCurrentNewId(String new_id) {
 		// get data from webservice
@@ -346,6 +337,11 @@ public class NewsController {
 			line = (Element) catid_id.item(0);
 			n.setCatid_id(Integer.parseInt(getCharacterDataFromElement(line)));
 
+			// tags
+			NodeList tags = element.getElementsByTagName("tags");
+			line = (Element) tags.item(0);
+			n.setTags(getCharacterDataFromElement(line));
+
 			list_related_news.add(n);
 
 		}
@@ -365,17 +361,30 @@ public class NewsController {
 			Element element = (Element) nl.item(i);
 			Comment c = new Comment();
 
-			if (element.getTagName().equals("id")) {
-				c.setId(Integer.parseInt(element.getTextContent()));
-			} else if (element.getTagName().equals("new-id")) {
-				c.setNew_id(Integer.parseInt(element.getTextContent()));
-			} else if (element.getTagName().equals("user-name")) {
-				c.setUser_name(element.getTextContent());
-			} else if (element.getTagName().equals("comments")) {
-				c.setComment(element.getTextContent());
-			} else if (element.getTagName().equals("time-comment")) {
-				c.setTime_comment(Timestamp.valueOf(element.getTextContent()));
-			}
+			// id
+			NodeList id = element.getElementsByTagName("id");
+			Element line = (Element) id.item(0);
+			c.setId(Integer.parseInt(getCharacterDataFromElement(line)));
+
+			// new-id
+			NodeList current_new_id = element.getElementsByTagName("new-id");
+			line = (Element) current_new_id.item(0);
+			c.setNew_id(Integer.parseInt(getCharacterDataFromElement(line)));
+			
+			//user name
+			NodeList user_name = element.getElementsByTagName("user-name");
+			line = (Element) user_name.item(0);
+			c.setUser_name(getCharacterDataFromElement(line));
+			
+			// comment contents
+			NodeList comments = element.getElementsByTagName("comments");
+			line = (Element) comments.item(0);
+			c.setComment(getCharacterDataFromElement(line));
+			
+			// time comment
+			NodeList time_comment = element.getElementsByTagName("time-comment");
+			line = (Element) time_comment.item(0);
+			c.setTime_comment(Timestamp.valueOf(getCharacterDataFromElement(line)));
 
 			list_comments.add(c);
 
@@ -383,8 +392,13 @@ public class NewsController {
 		return list_comments;
 	}
 
-	public void addComment() {
+	public void addComment(String current_new_id, String user_name, String comment_contents) {
+		String comment_xml = "<comment>" + "<id></id>" + "<new-id>" + current_new_id + "</new-id>" + "<user-name>"
+				+ user_name + "</user-name>" + "<comments>" + comment_contents + "</comments>"
+				+ "<time-comment></time-comment>" + "</comment>";
 
+		Response response = client.target(BASE_URI + "addComment").request().post(Entity.xml(comment_xml));
+		System.out.println("Response details: " + response.toString());
 	}
 
 	/**
@@ -427,6 +441,19 @@ public class NewsController {
 			return cd.getData();
 		}
 		return "";
+	}
+
+	/**
+	 * Lấy ra list các tags
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public List<String> getTags(String input) {
+		String[] array_tags = new String[5];
+		array_tags = input.split(",");
+
+		return new ArrayList<String>(Arrays.asList(array_tags));
 	}
 
 	public List<News> getList_news() {
