@@ -28,11 +28,16 @@ import org.xml.sax.SAXException;
 
 import entity.Comment;
 import entity.News;
+import utils.BaseController;
 
 @ManagedBean
 @SessionScoped
-public class NewsController {
+public class NewsController extends BaseController {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4272073285836203919L;
 	// client vars
 	public Client client;
 	public static final String BASE_URI = "http://localhost:8081/AIW_News_Bank_Server/services/news/";
@@ -42,6 +47,7 @@ public class NewsController {
 	public List<News> list_related_news = new ArrayList<News>();
 	public News current_new = new News();
 	public List<Comment> list_comments = new ArrayList<Comment>();
+	List<String> list_tags = new ArrayList<String>();
 
 	// add comment vars
 	public int comment_id;
@@ -56,6 +62,8 @@ public class NewsController {
 	}
 
 	public List<News> findAll() {
+
+		list_news.clear();
 
 		// get data from webservice
 		String list_news_xml = client.target(BASE_URI + "findAll").request().get(String.class);
@@ -116,7 +124,7 @@ public class NewsController {
 
 	}
 
-	public News findNewById(String new_id) {
+	public void findNewById(String new_id) {
 		// get data from webservice
 		String list_news_xml = client.target(BASE_URI + "findNewById=" + new_id).request().get(String.class);
 
@@ -168,10 +176,30 @@ public class NewsController {
 		line = (Element) tags.item(0);
 		current_new.setTags(getCharacterDataFromElement(line));
 
-		return current_new;
+		// get related news
+		getRandomRelatedNewsByCatid(String.valueOf(current_new.getCatid_id()));
+
+		// get tags
+		if (list_tags.size() > 0) {
+			list_tags.clear();
+		}
+		list_tags = getTags(current_new.getTags());
+
+		// get comments
+		getCommentByNewId(String.valueOf(current_new.getId()));
+
+		// redirect page
+		try {
+			redirect(getContextPath() + "/current.xhtml");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// return current_new;
 	}
 
 	public List<News> findNewByCatid(String catid_name) {
+		list_news.clear();
 		// get data from webservice
 		String list_news_xml = client.target(BASE_URI + "findNewByCatid=" + catid_name).request().get(String.class);
 
@@ -230,7 +258,8 @@ public class NewsController {
 		return list_news;
 	}
 
-	public List<News> findNewByTag(String tag_name) {
+	public void findNewByTag(String tag_name) {
+		list_news.clear();
 		// get data from webservice
 		String list_news_xml = client.target(BASE_URI + "findNewByTag=" + tag_name).request().get(String.class);
 
@@ -285,12 +314,18 @@ public class NewsController {
 
 			list_news.add(n);
 		}
-		return list_news;
+		try {
+			redirect(getContextPath() + "/NewsByTag.xhtml");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	public List<News> getRelatedNewsByCurrentNewId(String new_id) {
+	public void getRandomRelatedNewsByCatid(String current_catid_of_new) {
+		list_related_news.clear();
 		// get data from webservice
-		String list_news_xml = client.target(BASE_URI + "getRelatedNewsByCurrentNewId=" + new_id).request()
+		String list_news_xml = client.target(BASE_URI + "getRandomRelatedNewsByCatid=" + current_catid_of_new).request()
 				.get(String.class);
 
 		// read xml string response
@@ -345,10 +380,11 @@ public class NewsController {
 			list_related_news.add(n);
 
 		}
-		return list_related_news;
+		// return list_related_news;
 	}
 
 	public List<Comment> getCommentByNewId(String new_id) {
+		list_comments.clear();
 
 		String list_comments_xml = client.target(BASE_URI + "getCommentByNewId=" + new_id).request().get(String.class);
 
@@ -370,17 +406,17 @@ public class NewsController {
 			NodeList current_new_id = element.getElementsByTagName("new-id");
 			line = (Element) current_new_id.item(0);
 			c.setNew_id(Integer.parseInt(getCharacterDataFromElement(line)));
-			
-			//user name
+
+			// user name
 			NodeList user_name = element.getElementsByTagName("user-name");
 			line = (Element) user_name.item(0);
 			c.setUser_name(getCharacterDataFromElement(line));
-			
+
 			// comment contents
 			NodeList comments = element.getElementsByTagName("comments");
 			line = (Element) comments.item(0);
 			c.setComment(getCharacterDataFromElement(line));
-			
+
 			// time comment
 			NodeList time_comment = element.getElementsByTagName("time-comment");
 			line = (Element) time_comment.item(0);
@@ -393,12 +429,15 @@ public class NewsController {
 	}
 
 	public void addComment(String current_new_id, String user_name, String comment_contents) {
-		String comment_xml = "<comment>" + "<id></id>" + "<new-id>" + current_new_id + "</new-id>" + "<user-name>"
+		String comment_xml = "<comment>" + "<id></id>" + "<new-id>" + current_new_id + "</new-id>" + "<user-name>@"
 				+ user_name + "</user-name>" + "<comments>" + comment_contents + "</comments>"
 				+ "<time-comment></time-comment>" + "</comment>";
 
 		Response response = client.target(BASE_URI + "addComment").request().post(Entity.xml(comment_xml));
 		System.out.println("Response details: " + response.toString());
+
+		// reload comment
+		getCommentByNewId(String.valueOf(current_new.getId()));
 	}
 
 	/**
@@ -528,15 +567,21 @@ public class NewsController {
 		this.time_comment = time_comment;
 	}
 
-	public static void main(String[] args) {
-		NewsController nc = new NewsController();
-		List<String> list_tags_separated = new ArrayList<String>();
-		News n = nc.findNewById("1");
-		System.out.println(n.getTags());
-		String[] arr_tags = n.getTags().split(",");
-		for (int i = 0; i < arr_tags.length; i++) {
-			System.out.println(arr_tags[i]);
-		}
-
+	public List<String> getList_tags() {
+		return list_tags;
 	}
+
+	public void setList_tags(List<String> list_tags) {
+		this.list_tags = list_tags;
+	}
+
+	/*
+	 * public static void main(String[] args) { NewsController nc = new
+	 * NewsController(); List<String> list_tags_separated = new
+	 * ArrayList<String>(); findNewById("1"); System.out.println(n.getTags());
+	 * String[] arr_tags = n.getTags().split(","); for (int i = 0; i <
+	 * arr_tags.length; i++) { System.out.println(arr_tags[i]); }
+	 * 
+	 * }
+	 */
 }

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8' ?>
+<!-- <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html >
 <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -8,30 +8,30 @@
 
 <h:head>
     <title><ui:insert name="title">#{sessionScope.mapLabel['common.page_title']}</ui:insert></title>
-    <!-- Css -->
+    Css
     <ui:include src="/resources/user/template/css.xhtml" />
     
-    <!-- favicon -->
+    favicon
     <link rel="shortcut icon" type="image/png" href="#{request.contextPath}/resources/user/img/LOGO-nhotalet-32.png"/>
     
-    <!-- Java Script -->
+    Java Script
     <ui:include src="/resources/user/template/js.xhtml" />
 </h:head>
 <h:body>
-<!--     <f:view locale="#{localeController.localeCode}" /> -->
+    <f:view locale="#{localeController.localeCode}" />
     <div id="wrapper">
         <ui:insert name="header">
             <ui:include src="header.xhtml"></ui:include>
         </ui:insert>
-<!--         <ui:insert name="nav"> -->
-<!--             <ui:include src="nav.xhtml"></ui:include> -->
-<!--         </ui:insert> -->
+        <ui:insert name="nav">
+            <ui:include src="nav.xhtml"></ui:include>
+        </ui:insert>
         <div id="contents" class="profile-page clearfix">
             <div class="wrap">
                 <ui:insert name="content"></ui:insert>
-<!--                 <ui:insert name="preview"> -->
-<!--                     <ui:include src="preview.xhtml"></ui:include> -->
-<!--                 </ui:insert> -->
+                <ui:insert name="preview">
+                    <ui:include src="preview.xhtml"></ui:include>
+                </ui:insert>
             </div>
         </div>
         <ui:insert name="footer">
@@ -44,3 +44,4 @@
 
 </h:body>
 </html>
+ -->

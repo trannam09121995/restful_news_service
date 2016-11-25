@@ -18,7 +18,7 @@
 	<ui:include src="/resources/template/js.xhtml" />
 </h:head>
 <h:body>
-	<f:view locale="#{localeController.localeCode}" />
+	<!-- <f:view locale="#{localeController.localeCode}" /> -->
 	<div id="wrapper">
 		<ui:insert name="header">
 			<ui:include src="header.xhtml"></ui:include>
@@ -37,10 +37,11 @@
 		<ui:insert name="footer">
 			<ui:include src="footer.xhtml"></ui:include>
 		</ui:insert>
+		<ui:define name="preview"></ui:define>
 	</div>
-	<!-- <img src="#{request.contextPath}/resources/img/ajax-loader.gif"
+	<img src="#{request.contextPath}/resources/img/ajax-loader.gif" width="100px" height="100px"
 		id="ajaxloader"
-		style="position: fixed; margin: auto; left: 0; right: 0; top: 0; bottom: 0; display: none;" /> -->
+		style="position: fixed; margin: auto; left: 0; right: 0; top: 0; bottom: 0; display: none;" />
 
 </h:body>
 </html>
