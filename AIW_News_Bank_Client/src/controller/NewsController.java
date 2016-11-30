@@ -6,10 +6,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.view.facelets.Tag;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -45,9 +45,12 @@ public class NewsController extends BaseController {
 	// display vars
 	public List<News> list_news = new ArrayList<News>();
 	public List<News> list_related_news = new ArrayList<News>();
+	public List<News> list_random_ten_news = new ArrayList<News>();
 	public News current_new = new News();
 	public List<Comment> list_comments = new ArrayList<Comment>();
-	List<String> list_tags = new ArrayList<String>();
+	List<String> list_current_new_tags = new ArrayList<String>();
+	List<String> list_all_tags = new ArrayList<String>();
+	public String current_searched_tag;
 
 	// add comment vars
 	public int comment_id;
@@ -59,6 +62,7 @@ public class NewsController extends BaseController {
 	public NewsController() {
 		client = ClientBuilder.newClient();
 		findAll();
+		findAllTags();
 	}
 
 	public List<News> findAll() {
@@ -180,10 +184,10 @@ public class NewsController extends BaseController {
 		getRandomRelatedNewsByCatid(String.valueOf(current_new.getCatid_id()));
 
 		// get tags
-		if (list_tags.size() > 0) {
-			list_tags.clear();
+		if (list_current_new_tags.size() > 0) {
+			list_current_new_tags.clear();
 		}
-		list_tags = getTags(current_new.getTags());
+		list_current_new_tags = new ArrayList<String>(Arrays.asList(getTags(current_new.getTags())));
 
 		// get comments
 		getCommentByNewId(String.valueOf(current_new.getId()));
@@ -259,6 +263,7 @@ public class NewsController extends BaseController {
 	}
 
 	public void findNewByTag(String tag_name) {
+		current_searched_tag = tag_name;
 		list_news.clear();
 		// get data from webservice
 		String list_news_xml = client.target(BASE_URI + "findNewByTag=" + tag_name).request().get(String.class);
@@ -315,7 +320,7 @@ public class NewsController extends BaseController {
 			list_news.add(n);
 		}
 		try {
-			redirect(getContextPath() + "/NewsByTag.xhtml");
+			redirect(getContextPath() + "/catid/NewsByTag.xhtml");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -440,6 +445,8 @@ public class NewsController extends BaseController {
 		getCommentByNewId(String.valueOf(current_new.getId()));
 	}
 
+	
+
 	/**
 	 * convert reponse xml string into readable xml document
 	 * 
@@ -488,12 +495,28 @@ public class NewsController extends BaseController {
 	 * @param input
 	 * @return
 	 */
-	public List<String> getTags(String input) {
+	public String[] getTags(String input) {
 		String[] array_tags = new String[5];
 		array_tags = input.split(",");
 
-		return new ArrayList<String>(Arrays.asList(array_tags));
+		return array_tags;
 	}
+	
+	public List<String> findAllTags() {
+		for (News n : list_news) {
+			List<String> temp_list = new ArrayList<String>(Arrays.asList(getTags(n.getTags())));
+			for (String s : temp_list) {
+				if (list_all_tags.contains(s)) {
+					continue;
+				}
+				list_all_tags.add(s);
+			}
+		}
+		return list_all_tags;
+	}
+	
+	
+	/**GETTERS/SETTERS*/
 
 	public List<News> getList_news() {
 		return list_news;
@@ -567,21 +590,36 @@ public class NewsController extends BaseController {
 		this.time_comment = time_comment;
 	}
 
-	public List<String> getList_tags() {
-		return list_tags;
+	public List<News> getList_random_ten_news() {
+		return list_random_ten_news;
 	}
 
-	public void setList_tags(List<String> list_tags) {
-		this.list_tags = list_tags;
+	public void setList_random_ten_news(List<News> list_random_ten_news) {
+		this.list_random_ten_news = list_random_ten_news;
 	}
 
-	/*
-	 * public static void main(String[] args) { NewsController nc = new
-	 * NewsController(); List<String> list_tags_separated = new
-	 * ArrayList<String>(); findNewById("1"); System.out.println(n.getTags());
-	 * String[] arr_tags = n.getTags().split(","); for (int i = 0; i <
-	 * arr_tags.length; i++) { System.out.println(arr_tags[i]); }
-	 * 
-	 * }
-	 */
+	public String getCurrent_searched_tag() {
+		return current_searched_tag;
+	}
+
+	public void setCurrent_searched_tag(String current_searched_tag) {
+		this.current_searched_tag = current_searched_tag;
+	}
+
+	public List<String> getList_current_new_tags() {
+		return list_current_new_tags;
+	}
+
+	public void setList_current_new_tags(List<String> list_current_new_tags) {
+		this.list_current_new_tags = list_current_new_tags;
+	}
+
+	public List<String> getList_all_tags() {
+		return list_all_tags;
+	}
+
+	public void setList_all_tags(List<String> list_all_tags) {
+		this.list_all_tags = list_all_tags;
+	}
+
 }

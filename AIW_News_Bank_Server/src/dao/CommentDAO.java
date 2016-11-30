@@ -45,12 +45,12 @@ public class CommentDAO extends AbstractDAO {
 		System.out.println("entered DAO");
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		CommentDAO cd = new CommentDAO();
 		Date date = new Date();
 		Timestamp ts = new Timestamp(date.getTime());
 		cd.addComment(3, "@trann", "MU will come back22222", ts);
 		System.out.println(".............");
-	}
+	}*/
 	
 }

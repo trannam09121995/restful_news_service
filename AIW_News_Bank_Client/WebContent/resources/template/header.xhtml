@@ -8,16 +8,33 @@
 	xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 <ui:composition>
 	<h:form id="fLogout">
-		<div id="header" style="padding:0px">
+		<div id="header" style="padding: 0px">
 			<div class="wrap clearfix">
 				<h1 class="logo">
-							<img src="#{request.contextPath}/resources/img/logo-official.jpg"
-								alt="ALENT WITHOUT END" style="width:350px;height:80px;"/>
-					
-				</h1>	
+					<h:commandLink styleClass="nav_home"
+						actionListener="#{newsController.findAll()}" action="/index">
+						<img src="#{request.contextPath}/resources/img/logo-official.jpg"
+							alt="GREEN NEWS" style="width: 350px; height: 80px;" />
+					</h:commandLink>
+
+
+				</h1>
+				<div class="control-right">
+					<ul class="navbar-nav navbar-right lst-ctrol">
+						<li><h:inputText styleClass="form-control" width="120px"
+								height="20px" a:placeholder="keywords search...">
+							</h:inputText></li>
+						<li><h:commandLink>
+								<i class="fa fa-search" aria-hidden="true"
+									style="font-size: 28px"></i>
+							</h:commandLink></li>
+					</ul>
+
+
 				</div>
-				
 			</div>
+
+		</div>
 	</h:form>
 </ui:composition>
 </html>
